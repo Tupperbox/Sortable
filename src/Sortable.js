@@ -386,6 +386,7 @@ function Sortable(el, options) {
 		dataIdAttr: 'data-id',
 		delay: 0,
 		delayOnTouchOnly: false,
+		delaySkipClass: null,
 		touchStartThreshold: (Number.parseInt ? Number : window).parseInt(window.devicePixelRatio, 10) || 1,
 		forceFallback: false,
 		fallbackClass: 'sortable-fallback',
@@ -558,6 +559,7 @@ Sortable.prototype = /** @lends Sortable.prototype */ {
 			el = _this.el,
 			options = _this.options,
 			ownerDocument = el.ownerDocument,
+			originalTarget = evt.target.shadowRoot && ((evt.path && evt.path[0]) || (evt.composedPath && evt.composedPath()[0])) || target,
 			dragStartFn;
 
 		if (target && !dragEl && (target.parentNode === el)) {
@@ -635,7 +637,7 @@ Sortable.prototype = /** @lends Sortable.prototype */ {
 			pluginEvent('delayStart', this, { evt });
 
 			// Delay is impossible for native DnD in Edge or IE
-			if (options.delay && (!options.delayOnTouchOnly || touch) && (!this.nativeDraggable || !(Edge || IE11OrLess))) {
+			if (options.delay && (!options.delayOnTouchOnly || touch) && (!options.delaySkipClass || !closest(evt.target, options.delaySkipClass, rootEl, false)) && (!this.nativeDraggable || !(Edge || IE11OrLess))) {
 				if (Sortable.eventCanceled) {
 					this._onDrop();
 					return;
@@ -1453,6 +1455,8 @@ Sortable.prototype = /** @lends Sortable.prototype */ {
 								toEl: parentEl,
 								originalEvent: evt
 							});
+
+							this.save();
 						}
 					}
 				}
@@ -1470,9 +1474,6 @@ Sortable.prototype = /** @lends Sortable.prototype */ {
 						toEl: parentEl,
 						originalEvent: evt
 					});
-
-					// Save sorting
-					this.save();
 				}
 			}
 

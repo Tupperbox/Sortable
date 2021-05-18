@@ -11,6 +11,8 @@
 }(this, function () { 'use strict';
 
   function _typeof(obj) {
+    "@babel/helpers - typeof";
+
     if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
       _typeof = function (obj) {
         return typeof obj;
@@ -57,20 +59,35 @@
     return _extends.apply(this, arguments);
   }
 
-  function _objectSpread(target) {
+  function ownKeys(object, enumerableOnly) {
+    var keys = Object.keys(object);
+
+    if (Object.getOwnPropertySymbols) {
+      var symbols = Object.getOwnPropertySymbols(object);
+      if (enumerableOnly) symbols = symbols.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
+      keys.push.apply(keys, symbols);
+    }
+
+    return keys;
+  }
+
+  function _objectSpread2(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i] != null ? arguments[i] : {};
-      var ownKeys = Object.keys(source);
 
-      if (typeof Object.getOwnPropertySymbols === 'function') {
-        ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
-          return Object.getOwnPropertyDescriptor(source, sym).enumerable;
-        }));
+      if (i % 2) {
+        ownKeys(Object(source), true).forEach(function (key) {
+          _defineProperty(target, key, source[key]);
+        });
+      } else if (Object.getOwnPropertyDescriptors) {
+        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+      } else {
+        ownKeys(Object(source)).forEach(function (key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
       }
-
-      ownKeys.forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
     }
 
     return target;
@@ -113,32 +130,43 @@
   }
 
   function _toConsumableArray(arr) {
-    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
   }
 
   function _arrayWithoutHoles(arr) {
-    if (Array.isArray(arr)) {
-      for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
-
-      return arr2;
-    }
+    if (Array.isArray(arr)) return _arrayLikeToArray(arr);
   }
 
   function _iterableToArray(iter) {
-    if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+    if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
+  }
+
+  function _unsupportedIterableToArray(o, minLen) {
+    if (!o) return;
+    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+    var n = Object.prototype.toString.call(o).slice(8, -1);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(o);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+  }
+
+  function _arrayLikeToArray(arr, len) {
+    if (len == null || len > arr.length) len = arr.length;
+
+    for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+    return arr2;
   }
 
   function _nonIterableSpread() {
-    throw new TypeError("Invalid attempt to spread non-iterable instance");
+    throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
 
   var version = "1.13.0";
 
   function userAgent(pattern) {
     if (typeof window !== 'undefined' && window.navigator) {
-      return !!
-      /*@__PURE__*/
-      navigator.userAgent.match(pattern);
+      return !! /*@__PURE__*/navigator.userAgent.match(pattern);
     }
   }
 
@@ -643,7 +671,7 @@
             rect: getRect(child)
           });
 
-          var fromRect = _objectSpread({}, animationStates[animationStates.length - 1].rect); // If animating: compensate for current animation
+          var fromRect = _objectSpread2({}, animationStates[animationStates.length - 1].rect); // If animating: compensate for current animation
 
 
           if (child.thisAnimationDuration) {
@@ -813,7 +841,7 @@
         if (!sortable[plugin.pluginName]) return; // Fire global events if it exists in this sortable
 
         if (sortable[plugin.pluginName][eventNameGlobal]) {
-          sortable[plugin.pluginName][eventNameGlobal](_objectSpread({
+          sortable[plugin.pluginName][eventNameGlobal](_objectSpread2({
             sortable: sortable
           }, evt));
         } // Only fire plugin event if plugin is enabled in this sortable,
@@ -821,7 +849,7 @@
 
 
         if (sortable.options[plugin.pluginName] && sortable[plugin.pluginName][eventName]) {
-          sortable[plugin.pluginName][eventName](_objectSpread({
+          sortable[plugin.pluginName][eventName](_objectSpread2({
             sortable: sortable
           }, evt));
         }
@@ -913,7 +941,7 @@
     evt.originalEvent = originalEvent;
     evt.pullMode = putSortable ? putSortable.lastPutMode : undefined;
 
-    var allEventProperties = _objectSpread({}, extraEventProperties, PluginManager.getEventProperties(name, sortable));
+    var allEventProperties = _objectSpread2(_objectSpread2({}, extraEventProperties), PluginManager.getEventProperties(name, sortable));
 
     for (var option in allEventProperties) {
       evt[option] = allEventProperties[option];
@@ -933,7 +961,7 @@
         originalEvent = _ref.evt,
         data = _objectWithoutProperties(_ref, ["evt"]);
 
-    PluginManager.pluginEvent.bind(Sortable)(eventName, sortable, _objectSpread({
+    PluginManager.pluginEvent.bind(Sortable)(eventName, sortable, _objectSpread2({
       dragEl: dragEl,
       parentEl: parentEl,
       ghostEl: ghostEl,
@@ -969,7 +997,7 @@
   };
 
   function _dispatchEvent(info) {
-    dispatchEvent(_objectSpread({
+    dispatchEvent(_objectSpread2({
       putSortable: putSortable,
       cloneEl: cloneEl,
       targetEl: dragEl,
@@ -1231,6 +1259,7 @@
       dataIdAttr: 'data-id',
       delay: 0,
       delayOnTouchOnly: false,
+      delaySkipClass: null,
       touchStartThreshold: (Number.parseInt ? Number : window).parseInt(window.devicePixelRatio, 10) || 1,
       forceFallback: false,
       fallbackClass: 'sortable-fallback',
@@ -1411,6 +1440,7 @@
           el = _this.el,
           options = _this.options,
           ownerDocument = el.ownerDocument,
+          originalTarget = evt.target.shadowRoot && (evt.path && evt.path[0] || evt.composedPath && evt.composedPath()[0]) || target,
           dragStartFn;
 
       if (target && !dragEl && target.parentNode === el) {
@@ -1486,7 +1516,7 @@
           evt: evt
         }); // Delay is impossible for native DnD in Edge or IE
 
-        if (options.delay && (!options.delayOnTouchOnly || touch) && (!this.nativeDraggable || !(Edge || IE11OrLess))) {
+        if (options.delay && (!options.delayOnTouchOnly || touch) && (!options.delaySkipClass || !closest(evt.target, options.delaySkipClass, rootEl, false)) && (!this.nativeDraggable || !(Edge || IE11OrLess))) {
           if (Sortable.eventCanceled) {
             this._onDrop();
 
@@ -1835,7 +1865,7 @@
       if (_silent) return;
 
       function dragOverEvent(name, extra) {
-        pluginEvent(name, _this, _objectSpread({
+        pluginEvent(name, _this, _objectSpread2({
           evt: evt,
           isOwner: isOwner,
           axis: vertical ? 'vertical' : 'horizontal',
@@ -2242,6 +2272,8 @@
                   toEl: parentEl,
                   originalEvent: evt
                 });
+
+                this.save();
               }
             }
           }
@@ -2258,10 +2290,7 @@
               name: 'end',
               toEl: parentEl,
               originalEvent: evt
-            }); // Save sorting
-
-
-            this.save();
+            });
           }
         }
       }
@@ -2674,7 +2703,7 @@
         throw "Sortable: Mounted plugin must be a constructor function, not ".concat({}.toString.call(plugin));
       }
 
-      if (plugin.utils) Sortable.utils = _objectSpread({}, Sortable.utils, plugin.utils);
+      if (plugin.utils) Sortable.utils = _objectSpread2(_objectSpread2({}, Sortable.utils), plugin.utils);
       PluginManager.mount(plugin);
     });
   };
@@ -3117,11 +3146,13 @@
         }
       }
 
+      var deselectTarget = sortable.options.deselectTarget || document;
+
       if (sortable.options.supportPointer) {
-        on(document, 'pointerup', this._deselectMultiDrag);
+        on(deselectTarget, 'pointerup', this._deselectMultiDrag);
       } else {
-        on(document, 'mouseup', this._deselectMultiDrag);
-        on(document, 'touchend', this._deselectMultiDrag);
+        on(deselectTarget, 'mouseup', this._deselectMultiDrag);
+        on(deselectTarget, 'touchend', this._deselectMultiDrag);
       }
 
       on(document, 'keydown', this._checkKeyDown);
@@ -3406,9 +3437,7 @@
             children = parentEl.children; // Multi-drag selection
 
         if (!dragStarted) {
-          if (options.multiDragKey && !this.multiDragKeyDown) {
-            this._deselectMultiDrag();
-          }
+          this._deselectMultiDrag();
 
           toggleClass(dragEl$1, options.selectedClass, !~multiDragElements.indexOf(dragEl$1));
 
@@ -3530,7 +3559,21 @@
 
             multiDragElements.forEach(function (multiDragElement) {
               unsetRect(multiDragElement);
-            });
+            }); // ?????
+
+            /*while (multiDragElements.length) {
+            	let el = multiDragElements[0];
+            	toggleClass(el, this.options.selectedClass, false);
+            	multiDragElements.shift();
+            	dispatchEvent({
+            		sortable: this.sortable,
+            		rootEl: this.sortable.el,
+            		name: 'deselect',
+            		targetEl: el,
+            		originalEvt: evt
+            	});
+            }*/
+
             toSortable.animateAll();
           }
 
@@ -3551,18 +3594,23 @@
       destroyGlobal: function destroyGlobal() {
         this._deselectMultiDrag();
 
-        off(document, 'pointerup', this._deselectMultiDrag);
-        off(document, 'mouseup', this._deselectMultiDrag);
-        off(document, 'touchend', this._deselectMultiDrag);
+        var deselectTarget = sortable.options.deselectTarget || document;
+        off(deselectTarget, 'pointerup', this._deselectMultiDrag);
+        off(deselectTarget, 'mouseup', this._deselectMultiDrag);
+        off(deselectTarget, 'touchend', this._deselectMultiDrag);
         off(document, 'keydown', this._checkKeyDown);
         off(document, 'keyup', this._checkKeyUp);
       },
       _deselectMultiDrag: function _deselectMultiDrag(evt) {
-        if (typeof dragStarted !== "undefined" && dragStarted) return; // Only deselect if selection is in this sortable
+        if (typeof dragStarted !== "undefined" && dragStarted) return; // Only deselect if in another group or multi drag key not down
 
-        if (multiDragSortable !== this.sortable) return; // Only deselect if target is not item in this sortable
+        if ((!multiDragSortable || multiDragSortable.options.group.name === this.sortable.options.group.name) && this.multiDragKeyDown) return; // Only deselect if we own this item
 
-        if (evt && closest(evt.target, this.options.draggable, this.sortable.el, false)) return; // Only deselect if left click
+        if (evt) {
+          var close = closest(evt.target, this.options.draggable, this.sortable.el, false);
+          if (!close || close.parentNode[expando] === this.sortable) return;
+        } // Only deselect if left click
+
 
         if (evt && evt.button !== 0) return;
 
@@ -3571,7 +3619,7 @@
           toggleClass(el, this.options.selectedClass, false);
           multiDragElements.shift();
           dispatchEvent({
-            sortable: this.sortable,
+            sortable: el.parentNode ? el.parentNode[expando] : multiDragSortable,
             rootEl: this.sortable.el,
             name: 'deselect',
             targetEl: el,
@@ -3598,13 +3646,12 @@
          * Selects the provided multi-drag item
          * @param  {HTMLElement} el    The element to be selected
          */
-        select: function select(el) {
-          var sortable = el.parentNode[expando];
+        select: function select(el, listEl) {
+          var sortable = listEl ? listEl[expando] : el.parentNode[expando];
           if (!sortable || !sortable.options.multiDrag || ~multiDragElements.indexOf(el)) return;
 
           if (multiDragSortable && multiDragSortable !== sortable) {
-            multiDragSortable.multiDrag._deselectMultiDrag();
-
+            //multiDragSortable.multiDrag._deselectMultiDrag();
             multiDragSortable = sortable;
           }
 
@@ -3616,9 +3663,9 @@
          * Deselects the provided multi-drag item
          * @param  {HTMLElement} el    The element to be deselected
          */
-        deselect: function deselect(el) {
-          var sortable = el.parentNode[expando],
-              index = multiDragElements.indexOf(el);
+        deselect: function deselect(el, listEl) {
+          var sortable = listEl ? listEl[expando] : el.parentNode[expando];
+          var index = multiDragElements.indexOf(el);
           if (!sortable || !sortable.options.multiDrag || !~index) return;
           toggleClass(el, sortable.options.selectedClass, false);
           multiDragElements.splice(index, 1);

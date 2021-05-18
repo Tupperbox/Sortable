@@ -35,11 +35,13 @@ function MultiDragPlugin() {
 			}
 		}
 
+		let deselectTarget = sortable.options.deselectTarget || document;
+
 		if (sortable.options.supportPointer) {
-			on(document, 'pointerup', this._deselectMultiDrag);
+			on(deselectTarget, 'pointerup', this._deselectMultiDrag);
 		} else {
-			on(document, 'mouseup', this._deselectMultiDrag);
-			on(document, 'touchend', this._deselectMultiDrag);
+			on(deselectTarget, 'mouseup', this._deselectMultiDrag);
+			on(deselectTarget, 'touchend', this._deselectMultiDrag);
 		}
 
 		on(document, 'keydown', this._checkKeyDown);
@@ -299,7 +301,7 @@ function MultiDragPlugin() {
 
 		drop({ originalEvent: evt, rootEl, parentEl, sortable, dispatchSortableEvent, oldIndex, putSortable }) {
 			let toSortable = (putSortable || this.sortable);
-
+			
 			if (!evt) return;
 
 			let options = this.options,
@@ -307,9 +309,7 @@ function MultiDragPlugin() {
 
 			// Multi-drag selection
 			if (!dragStarted) {
-				if (options.multiDragKey && !this.multiDragKeyDown) {
-					this._deselectMultiDrag();
-				}
+				this._deselectMultiDrag();
 				toggleClass(dragEl, options.selectedClass, !~multiDragElements.indexOf(dragEl));
 
 				if (!~multiDragElements.indexOf(dragEl)) {
@@ -436,6 +436,20 @@ function MultiDragPlugin() {
 						unsetRect(multiDragElement);
 					});
 
+					// ?????
+					/*while (multiDragElements.length) {
+						let el = multiDragElements[0];
+						toggleClass(el, this.options.selectedClass, false);
+						multiDragElements.shift();
+						dispatchEvent({
+							sortable: this.sortable,
+							rootEl: this.sortable.el,
+							name: 'deselect',
+							targetEl: el,
+							originalEvt: evt
+						});
+					}*/
+
 					toSortable.animateAll();
 				}
 
@@ -458,9 +472,10 @@ function MultiDragPlugin() {
 
 		destroyGlobal() {
 			this._deselectMultiDrag();
-			off(document, 'pointerup', this._deselectMultiDrag);
-			off(document, 'mouseup', this._deselectMultiDrag);
-			off(document, 'touchend', this._deselectMultiDrag);
+			let deselectTarget = sortable.options.deselectTarget || document;
+			off(deselectTarget, 'pointerup', this._deselectMultiDrag);
+			off(deselectTarget, 'mouseup', this._deselectMultiDrag);
+			off(deselectTarget, 'touchend', this._deselectMultiDrag);
 
 			off(document, 'keydown', this._checkKeyDown);
 			off(document, 'keyup', this._checkKeyUp);
@@ -469,11 +484,15 @@ function MultiDragPlugin() {
 		_deselectMultiDrag(evt) {
 			if (typeof dragStarted !== "undefined" && dragStarted) return;
 
-			// Only deselect if selection is in this sortable
-			if (multiDragSortable !== this.sortable) return;
+			// Only deselect if in another group or multi drag key not down
+			if ((!multiDragSortable || multiDragSortable.options.group.name === this.sortable.options.group.name)
+				&& this.multiDragKeyDown) return;
 
-			// Only deselect if target is not item in this sortable
-			if (evt && closest(evt.target, this.options.draggable, this.sortable.el, false)) return;
+			// Only deselect if we own this item
+			if (evt) {
+				const close = closest(evt.target, this.options.draggable, this.sortable.el, false);
+				if(!close || close.parentNode[expando] === this.sortable) return;
+			}
 
 			// Only deselect if left click
 			if (evt && evt.button !== 0) return;
@@ -483,7 +502,7 @@ function MultiDragPlugin() {
 				toggleClass(el, this.options.selectedClass, false);
 				multiDragElements.shift();
 				dispatchEvent({
-					sortable: this.sortable,
+					sortable: el.parentNode ? el.parentNode[expando] : multiDragSortable,
 					rootEl: this.sortable.el,
 					name: 'deselect',
 					targetEl: el,
@@ -513,11 +532,11 @@ function MultiDragPlugin() {
 			 * Selects the provided multi-drag item
 			 * @param  {HTMLElement} el    The element to be selected
 			 */
-			select(el) {
-				let sortable = el.parentNode[expando];
+			select(el, listEl) {
+				let sortable = listEl ? listEl[expando] : el.parentNode[expando];
 				if (!sortable || !sortable.options.multiDrag || ~multiDragElements.indexOf(el)) return;
 				if (multiDragSortable && multiDragSortable !== sortable) {
-					multiDragSortable.multiDrag._deselectMultiDrag();
+					//multiDragSortable.multiDrag._deselectMultiDrag();
 					multiDragSortable = sortable;
 				}
 				toggleClass(el, sortable.options.selectedClass, true);
@@ -527,9 +546,9 @@ function MultiDragPlugin() {
 			 * Deselects the provided multi-drag item
 			 * @param  {HTMLElement} el    The element to be deselected
 			 */
-			deselect(el) {
-				let sortable = el.parentNode[expando],
-					index = multiDragElements.indexOf(el);
+			deselect(el, listEl) {
+				let sortable = listEl ? listEl[expando] : el.parentNode[expando];
+				let index = multiDragElements.indexOf(el);
 				if (!sortable || !sortable.options.multiDrag || !~index) return;
 				toggleClass(el, sortable.options.selectedClass, false);
 				multiDragElements.splice(index, 1);

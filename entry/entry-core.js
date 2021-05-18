@@ -3,6 +3,7 @@ import AutoScroll from '../plugins/AutoScroll';
 import OnSpill from '../plugins/OnSpill';
 import Swap from '../plugins/Swap';
 import MultiDrag from '../plugins/MultiDrag';
+import OnDrag from '../plugins/OnDrag';
 
 export default Sortable;
 
@@ -15,5 +16,6 @@ export {
 
 	// Extra
 	Swap,
-	MultiDrag
+	MultiDrag,
+	OnDrag
 };

@@ -4,21 +4,21 @@ export default ([
 	{
 		input: 'entry/entry-core.js',
 		output: Object.assign({}, build.output, {
-			file: 'modular/sortable.core.esm.js',
+			file: 'modular/sortable.core.esm.mjs',
 			format: 'esm'
 		})
 	},
 	{
 		input: 'entry/entry-defaults.js',
 		output: Object.assign({}, build.output, {
-			file: 'modular/sortable.esm.js',
+			file: 'modular/sortable.esm.mjs',
 			format: 'esm'
 		})
 	},
 	{
 		input: 'entry/entry-complete.js',
 		output: Object.assign({}, build.output, {
-			file: 'modular/sortable.complete.esm.js',
+			file: 'modular/sortable.complete.esm.mjs',
 			format: 'esm'
 		})
 	}

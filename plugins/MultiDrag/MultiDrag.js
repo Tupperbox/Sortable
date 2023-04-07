@@ -472,7 +472,7 @@ function MultiDragPlugin() {
 
 		destroyGlobal() {
 			this._deselectMultiDrag();
-			let deselectTarget = sortable.options.deselectTarget || document;
+			let deselectTarget = this.sortable.options.deselectTarget || document;
 			off(deselectTarget, 'pointerup', this._deselectMultiDrag);
 			off(deselectTarget, 'mouseup', this._deselectMultiDrag);
 			off(deselectTarget, 'touchend', this._deselectMultiDrag);

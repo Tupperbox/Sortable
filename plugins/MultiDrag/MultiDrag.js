@@ -44,12 +44,8 @@ function MultiDragPlugin() {
 			on(deselectTarget, "touchend", this._deselectMultiDrag);
 		}
 
-		on(document, "keydown", this._checkKeyDown);
-		on(document, "keyup", this._checkKeyUp);
-
 		this.defaults = {
 			selectedClass: "sortable-selected",
-			multiDragKey: null,
 			setData(dataTransfer, dragEl) {
 				let data = "";
 				if (multiDragElements.length && multiDragSortable === sortable) {
@@ -65,7 +61,6 @@ function MultiDragPlugin() {
 	}
 
 	MultiDrag.prototype = {
-		multiDragKeyDown: false,
 		isMultiDrag: false,
 
 		delayStartGlobal({ dragEl: dragged }) {
@@ -73,7 +68,7 @@ function MultiDragPlugin() {
 		},
 
 		delayEnded() {
-			this.isMultiDrag = ~multiDragElements.indexOf(dragEl);
+			this.isMultiDrag = multiDragElements.indexOf(dragEl) !== -1;
 		},
 
 		setupClone({ sortable, cancel }) {
@@ -231,7 +226,6 @@ function MultiDragPlugin() {
 			parentEl,
 			putSortable,
 		}) {
-			let options = this.options;
 			if (insertion) {
 				// Clones must be hidden before folding animation to capture dragRectAbsolute properly
 				if (isOwner) {
@@ -241,7 +235,7 @@ function MultiDragPlugin() {
 				initialFolding = false;
 				// If leaving sort:false root, or already folding - Fold to new location
 				if (
-					options.animation &&
+					this.options.animation &&
 					multiDragElements.length > 1 &&
 					(folding ||
 						(!isOwner && !activeSortable.options.sort && !putSortable))
@@ -526,11 +520,13 @@ function MultiDragPlugin() {
 			off(deselectTarget, "pointerup", this._deselectMultiDrag);
 			off(deselectTarget, "mouseup", this._deselectMultiDrag);
 			off(deselectTarget, "touchend", this._deselectMultiDrag);
-
-			off(document, "keydown", this._checkKeyDown);
-			off(document, "keyup", this._checkKeyUp);
 		},
 
+		/**
+		 *
+		 * @param {MouseEvent} [evt]
+		 * @returns
+		 */
 		_deselectMultiDrag(evt) {
 			if (typeof dragStarted !== "undefined" && dragStarted) return;
 
@@ -539,7 +535,8 @@ function MultiDragPlugin() {
 				(!multiDragSortable ||
 					multiDragSortable.options.group.name ===
 						this.sortable.options.group.name) &&
-				this.multiDragKeyDown
+				evt &&
+				evt.ctrlKey
 			)
 				return;
 
@@ -568,18 +565,6 @@ function MultiDragPlugin() {
 					targetEl: el,
 					originalEvt: evt,
 				});
-			}
-		},
-
-		_checkKeyDown(evt) {
-			if (evt.key === this.options.multiDragKey) {
-				this.multiDragKeyDown = true;
-			}
-		},
-
-		_checkKeyUp(evt) {
-			if (evt.key === this.options.multiDragKey) {
-				this.multiDragKeyDown = false;
 			}
 		},
 	};
@@ -653,17 +638,7 @@ function MultiDragPlugin() {
 				newIndicies,
 			};
 		},
-		optionListeners: {
-			multiDragKey(key) {
-				key = key.toLowerCase();
-				if (key === "ctrl") {
-					key = "Control";
-				} else if (key.length > 1) {
-					key = key.charAt(0).toUpperCase() + key.substr(1);
-				}
-				return key;
-			},
-		},
+		optionListeners: {},
 	});
 }
 
@@ -683,7 +658,7 @@ function insertMultiDragElements(clonesInserted, rootEl) {
 
 /**
  * Insert multi-drag clones
- * @param  {[Boolean]} elementsInserted  Whether the multi-drag elements are inserted
+ * @param  {Boolean} elementsInserted  Whether the multi-drag elements are inserted
  * @param  {HTMLElement} rootEl
  */
 function insertMultiDragClones(elementsInserted, rootEl) {

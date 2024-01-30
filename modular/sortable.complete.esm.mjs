@@ -3036,7 +3036,7 @@ function MultiDragPlugin() {
   function MultiDrag(sortable) {
     // Bind all private methods
     for (let fn in this) {
-      if (fn.charAt(0) === '_' && typeof this[fn] === 'function') {
+      if (fn.charAt(0) === "_" && typeof this[fn] === "function") {
         this[fn] = this[fn].bind(this);
       }
     }
@@ -3044,37 +3044,33 @@ function MultiDragPlugin() {
     let deselectTarget = sortable.options.deselectTarget || document;
 
     if (sortable.options.supportPointer) {
-      on(deselectTarget, 'pointerup', this._deselectMultiDrag);
+      on(deselectTarget, "pointerup", this._deselectMultiDrag);
     } else {
-      on(deselectTarget, 'mouseup', this._deselectMultiDrag);
-      on(deselectTarget, 'touchend', this._deselectMultiDrag);
+      on(deselectTarget, "mouseup", this._deselectMultiDrag);
+      on(deselectTarget, "touchend", this._deselectMultiDrag);
     }
 
-    on(document, 'keydown', this._checkKeyDown);
-    on(document, 'keyup', this._checkKeyUp);
     this.defaults = {
-      selectedClass: 'sortable-selected',
-      multiDragKey: null,
+      selectedClass: "sortable-selected",
 
       setData(dataTransfer, dragEl) {
-        let data = '';
+        let data = "";
 
         if (multiDragElements.length && multiDragSortable === sortable) {
           multiDragElements.forEach((multiDragElement, i) => {
-            data += (!i ? '' : ', ') + multiDragElement.textContent;
+            data += (!i ? "" : ", ") + multiDragElement.textContent;
           });
         } else {
           data = dragEl.textContent;
         }
 
-        dataTransfer.setData('Text', data);
+        dataTransfer.setData("Text", data);
       }
 
     };
   }
 
   MultiDrag.prototype = {
-    multiDragKeyDown: false,
     isMultiDrag: false,
 
     delayStartGlobal({
@@ -3084,7 +3080,7 @@ function MultiDragPlugin() {
     },
 
     delayEnded() {
-      this.isMultiDrag = ~multiDragElements.indexOf(dragEl$1);
+      this.isMultiDrag = multiDragElements.indexOf(dragEl$1) !== -1;
     },
 
     setupClone({
@@ -3097,7 +3093,7 @@ function MultiDragPlugin() {
         multiDragClones.push(clone(multiDragElements[i]));
         multiDragClones[i].sortableIndex = multiDragElements[i].sortableIndex;
         multiDragClones[i].draggable = false;
-        multiDragClones[i].style['will-change'] = '';
+        multiDragClones[i].style["will-change"] = "";
         toggleClass(multiDragClones[i], this.options.selectedClass, false);
         multiDragElements[i] === dragEl$1 && toggleClass(multiDragClones[i], this.options.chosenClass, false);
       }
@@ -3118,7 +3114,7 @@ function MultiDragPlugin() {
       if (!this.options.removeCloneOnHide) {
         if (multiDragElements.length && multiDragSortable === sortable) {
           insertMultiDragClones(true, rootEl);
-          dispatchSortableEvent('clone');
+          dispatchSortableEvent("clone");
           cancel();
         }
       }
@@ -3132,7 +3128,7 @@ function MultiDragPlugin() {
       if (!this.isMultiDrag) return;
       insertMultiDragClones(false, rootEl);
       multiDragClones.forEach(clone => {
-        css(clone, 'display', '');
+        css(clone, "display", "");
       });
       cloneNowShown();
       clonesHidden = false;
@@ -3146,7 +3142,7 @@ function MultiDragPlugin() {
     }) {
       if (!this.isMultiDrag) return;
       multiDragClones.forEach(clone => {
-        css(clone, 'display', 'none');
+        css(clone, "display", "none");
 
         if (this.options.removeCloneOnHide && clone.parentNode) {
           clone.parentNode.removeChild(clone);
@@ -3191,7 +3187,7 @@ function MultiDragPlugin() {
         if (this.options.animation) {
           multiDragElements.forEach(multiDragElement => {
             if (multiDragElement === dragEl$1) return;
-            css(multiDragElement, 'position', 'absolute');
+            css(multiDragElement, "position", "absolute");
           });
           let dragRect = getRect(dragEl$1, false, true, true);
           multiDragElements.forEach(multiDragElement => {
@@ -3261,8 +3257,6 @@ function MultiDragPlugin() {
       parentEl,
       putSortable
     }) {
-      let options = this.options;
-
       if (insertion) {
         // Clones must be hidden before folding animation to capture dragRectAbsolute properly
         if (isOwner) {
@@ -3271,7 +3265,7 @@ function MultiDragPlugin() {
 
         initialFolding = false; // If leaving sort:false root, or already folding - Fold to new location
 
-        if (options.animation && multiDragElements.length > 1 && (folding || !isOwner && !activeSortable.options.sort && !putSortable)) {
+        if (this.options.animation && multiDragElements.length > 1 && (folding || !isOwner && !activeSortable.options.sort && !putSortable)) {
           // Fold: Set all multi drag elements's rects to dragEl's rect when multi-drag elements are invisible
           let dragRectAbsolute = getRect(dragEl$1, false, true, true);
           multiDragElements.forEach(multiDragElement => {
@@ -3362,7 +3356,7 @@ function MultiDragPlugin() {
           dispatchEvent({
             sortable,
             rootEl,
-            name: 'select',
+            name: "select",
             targetEl: dragEl$1,
             originalEvt: evt
           }); // Modifier activated, select from last to dragEl
@@ -3391,7 +3385,7 @@ function MultiDragPlugin() {
                 dispatchEvent({
                   sortable,
                   rootEl,
-                  name: 'select',
+                  name: "select",
                   targetEl: children[i],
                   originalEvt: evt
                 });
@@ -3408,7 +3402,7 @@ function MultiDragPlugin() {
           dispatchEvent({
             sortable,
             rootEl,
-            name: 'deselect',
+            name: "deselect",
             targetEl: dragEl$1,
             originalEvt: evt
           });
@@ -3420,7 +3414,7 @@ function MultiDragPlugin() {
         // Do not "unfold" after around dragEl if reverted
         if ((parentEl[expando].options.sort || parentEl !== rootEl) && multiDragElements.length > 1) {
           let dragRect = getRect(dragEl$1),
-              multiDragIndex = index(dragEl$1, ':not(.' + this.options.selectedClass + ')');
+              multiDragIndex = index(dragEl$1, ":not(." + this.options.selectedClass + ")");
           if (!initialFolding && options.animation) dragEl$1.thisAnimationDuration = null;
           toSortable.captureAnimationState();
 
@@ -3467,7 +3461,7 @@ function MultiDragPlugin() {
               });
 
               if (update) {
-                dispatchSortableEvent('update');
+                dispatchSortableEvent("update");
               }
             }
           } // Must be done after capturing individual rects (scroll bar)
@@ -3497,7 +3491,7 @@ function MultiDragPlugin() {
       } // Remove clones if necessary
 
 
-      if (rootEl === parentEl || putSortable && putSortable.lastPutMode !== 'clone') {
+      if (rootEl === parentEl || putSortable && putSortable.lastPutMode !== "clone") {
         multiDragClones.forEach(clone => {
           clone.parentNode && clone.parentNode.removeChild(clone);
         });
@@ -3513,17 +3507,20 @@ function MultiDragPlugin() {
       this._deselectMultiDrag();
 
       let deselectTarget = this.sortable.options.deselectTarget || document;
-      off(deselectTarget, 'pointerup', this._deselectMultiDrag);
-      off(deselectTarget, 'mouseup', this._deselectMultiDrag);
-      off(deselectTarget, 'touchend', this._deselectMultiDrag);
-      off(document, 'keydown', this._checkKeyDown);
-      off(document, 'keyup', this._checkKeyUp);
+      off(deselectTarget, "pointerup", this._deselectMultiDrag);
+      off(deselectTarget, "mouseup", this._deselectMultiDrag);
+      off(deselectTarget, "touchend", this._deselectMultiDrag);
     },
 
+    /**
+     *
+     * @param {MouseEvent} [evt]
+     * @returns
+     */
     _deselectMultiDrag(evt) {
       if (typeof dragStarted !== "undefined" && dragStarted) return; // Only deselect if in another group or multi drag key not down
 
-      if ((!multiDragSortable || multiDragSortable.options.group.name === this.sortable.options.group.name) && this.multiDragKeyDown) return; // Only deselect if we own this item
+      if ((!multiDragSortable || multiDragSortable.options.group.name === this.sortable.options.group.name) && evt && evt.ctrlKey) return; // Only deselect if we own this item
 
       if (evt) {
         const close = closest(evt.target, this.options.draggable, this.sortable.el, false);
@@ -3540,29 +3537,17 @@ function MultiDragPlugin() {
         dispatchEvent({
           sortable: el.parentNode ? el.parentNode[expando] : multiDragSortable,
           rootEl: this.sortable.el,
-          name: 'deselect',
+          name: "deselect",
           targetEl: el,
           originalEvt: evt
         });
-      }
-    },
-
-    _checkKeyDown(evt) {
-      if (evt.key === this.options.multiDragKey) {
-        this.multiDragKeyDown = true;
-      }
-    },
-
-    _checkKeyUp(evt) {
-      if (evt.key === this.options.multiDragKey) {
-        this.multiDragKeyDown = false;
       }
     }
 
   };
   return _extends(MultiDrag, {
     // Static methods & properties
-    pluginName: 'multiDrag',
+    pluginName: "multiDrag",
     utils: {
       /**
        * Selects the provided multi-drag item
@@ -3609,7 +3594,7 @@ function MultiDragPlugin() {
         if (folding && multiDragElement !== dragEl$1) {
           newIndex = -1;
         } else if (folding) {
-          newIndex = index(multiDragElement, ':not(.' + this.options.selectedClass + ')');
+          newIndex = index(multiDragElement, ":not(." + this.options.selectedClass + ")");
         } else {
           newIndex = index(multiDragElement);
         }
@@ -3627,20 +3612,7 @@ function MultiDragPlugin() {
       };
     },
 
-    optionListeners: {
-      multiDragKey(key) {
-        key = key.toLowerCase();
-
-        if (key === 'ctrl') {
-          key = 'Control';
-        } else if (key.length > 1) {
-          key = key.charAt(0).toUpperCase() + key.substr(1);
-        }
-
-        return key;
-      }
-
-    }
+    optionListeners: {}
   });
 }
 
@@ -3657,7 +3629,7 @@ function insertMultiDragElements(clonesInserted, rootEl) {
 }
 /**
  * Insert multi-drag clones
- * @param  {[Boolean]} elementsInserted  Whether the multi-drag elements are inserted
+ * @param  {Boolean} elementsInserted  Whether the multi-drag elements are inserted
  * @param  {HTMLElement} rootEl
  */
 

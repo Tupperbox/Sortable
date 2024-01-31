@@ -331,7 +331,7 @@ function MultiDragPlugin() {
 
 			// Multi-drag selection
 			if (!dragStarted) {
-				this._deselectMultiDrag();
+				if (!evt.ctrlKey) this._deselectMultiDrag();
 				toggleClass(
 					dragEl,
 					options.selectedClass,
